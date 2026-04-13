@@ -19,7 +19,7 @@
       },
       "streamSettings": {
         "network": "__NETWORK__",
-        "security": "none",
+        "security": "tls",
         "tcpSettings": {
           "header": {
             "type": "none"
@@ -34,7 +34,7 @@
         }
       },
       "sniffing": {
-        "enabled": true,
+        "enabled": false,
         "destOverride": ["http", "tls"]
       }
     },
@@ -83,7 +83,7 @@
       "0": {
         "statsUserUplink": true,
         "statsUserDownlink": true,
-        "bufferSize": 10240,
+        "bufferSize": 65536,
         "uplinkCapacity": __SPEED_LIMIT__,
         "downlinkCapacity": __SPEED_LIMIT__
       }

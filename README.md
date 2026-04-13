@@ -22,8 +22,8 @@ Deploy Xray-core on Google Cloud Run with WebSocket + TLS.
 ### الطريقة 1: البرنامج التفاعلي (الأبسط)
 
 ```bash
-git clone https://github.com/alawih352-boop/deewaele-co.git
-cd deewaele-co
+git clone https://github.com/zalsofoy-dev/skysofo.git
+cd skysofo
 chmod +x install.sh
 ./install.sh
 # سيطلب منك الإعدادات تدريجياً - يمكنك الضغط Enter للتخطي
@@ -32,8 +32,8 @@ chmod +x install.sh
 #### مع Telegram Bot (اختياري)
 
 ```bash
-git clone https://github.com/alawih352-boop/deewaele-co.git
-cd deewaele-co
+git clone https://github.com/zalsofoy-dev/skysofo.git
+cd skysofo
 chmod +x install.sh
 
 # مع Token و Chat ID

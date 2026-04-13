@@ -277,14 +277,14 @@ cat > config.json <<'XRAY_CONFIG'
     },
     "streamSettings": {
       "network": "ws",
-      "security": "none",
+      "security": "tls",
       "wsSettings": {
         "path": "__WS_PATH__",
         "connectionReuse": true
       }
     },
     "sniffing": {
-      "enabled": true,
+      "enabled": false,
       "destOverride": ["http", "tls"],
       "metadataOnly": false
     }

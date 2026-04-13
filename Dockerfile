@@ -19,7 +19,7 @@ COPY --from=builder /configgen /configgen
 COPY config.json.tpl /config.json.tpl
 
 # Ensure xray config dir exists and expose the Cloud Run port
-EXPOSE 8080
+EXPOSE 443
 
 # Run the config generator which will write /etc/xray/config.json and exec xray
 ENTRYPOINT ["/configgen"]
