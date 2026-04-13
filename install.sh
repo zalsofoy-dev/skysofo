@@ -697,19 +697,71 @@ send_notify_admin() {
   export SHARE_LINK="${SHARE_LINK:-}"
 
   payload=$(python3 <<'PYEOF'
-import json, os
+import json, os, re
+
+REGION_NAMES = {
+    "us-central1": "US🇺🇸Io✓",
+    "us-east1": "US🇺🇸_SC✓",
+    "us-east4": "US🇺🇸_NV✓",
+    "us-east5": "US🇺🇸_Oh✓",
+    "us-west1": "US🇺🇸_Or✓",
+    "us-west2": "US🇺🇸_Ca✓",
+    "us-west3": "US🇺🇸_Ut✓",
+    "us-west4": "US🇺🇸_Ne✓",
+    "us-south1": "US🇺🇸_Te✓",
+    "northamerica-northeast1": "Canada🇨🇦_Montreal",
+    "northamerica-northeast2": "Canada🇨🇦_Toronto",
+    "southamerica-east1": "Brazil🇧🇷",
+    "europe-north1": "Finland🇫🇮",
+    "europe-north2": "Sweden🇸🇪✓",
+    "europe-central2": "Poland🇵🇱✓",
+    "europe-southwest1": "Spain🇪🇸",
+    "europe-west1": "Belgium🇧🇪✓",
+    "europe-west2": "United_Kingdom🇬🇧",
+    "europe-west3": "Germany🇩🇪✓",
+    "europe-west4": "Netherlands🇳🇱✓",
+    "europe-west6": "Switzerland🇨🇭",
+    "europe-west8": "Italy🇮🇹(Milan)",
+    "europe-west9": "France🇫🇷",
+    "europe-west10": "Germany🇩🇪✓",
+    "europe-west12": "Italy🇮🇹✓",
+    "asia-east1": "Taiwan🇹🇼",
+    "asia-east2": "Hong_Kong🇭🇰",
+    "asia-northeast1": "Japan🇯🇵_Tokyo",
+    "asia-northeast2": "Japan🇯🇵_Osaka",
+    "asia-northeast3": "South_Korea🇰🇷",
+    "asia-southeast1": "Singapore🇸🇬",
+    "asia-south1": "India🇮🇳",
+    "australia-southeast1": "Australia🇦🇺",
+    "africa-south1": "South_Africa🇿🇦",
+    "me-west1": "Israel🇮🇱",
+}
+
+service_region = os.getenv("SERVICE_REGION", "")
+if service_region in REGION_NAMES:
+    region_str = REGION_NAMES[service_region]
+    emoji_pattern = re.compile(r'[\U0001F1E6-\U0001F1FF]{2}')
+    match = emoji_pattern.search(region_str)
+    if match:
+        flag = match.group()
+        country = region_str[:match.start()].strip()
+    else:
+        country = region_str
+        flag = ""
+else:
+    country = service_region
+    flag = service_region
 
 data = {
     "id": os.getenv("SERVICE", ""),
-    "name": os.getenv("HOST", ""),
-    "location": os.getenv("SERVICE_REGION", ""),
+    "name": os.getenv("REGION", ""),
+    "location": country,
     "config": os.getenv("SHARE_LINK", ""),
-    "flag": os.getenv("SERVICE_REGION", ""),
+    "flag": flag,
     "protocol": os.getenv("PROTO", "").upper(),
     "region": os.getenv("REGION", ""),
     "network": os.getenv("NETWORK_DISPLAY", ""),
     "timestamp": os.getenv("TS_PLUS1", ""),
-    "body": os.getenv("BODY", ""),
 }
 print(json.dumps(data))
 PYEOF
