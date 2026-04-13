@@ -32,7 +32,7 @@ func main() {
 	user := getenv("USER_ID", getenv("UUID", "changeme"))
 	wspath := getenv("WS_PATH", "/ws")
 	network := getenv("NETWORK", "ws")
-	port := getenv("PORT", "8080")
+	port := getenv("PORT", "443")
 	speedLimit := getenv("SPEED_LIMIT", "0")  // 0 = unlimited
 	host := getenv("HOST", "localhost")  // WebSocket host header
 
