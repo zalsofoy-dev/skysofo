@@ -729,6 +729,7 @@ send_notify_admin() {
   export SERVICE="$SERVICE"
   export PROTO="$PROTO"
   export SERVICE_REGION="$service_region"
+  export SERVICE_FLAG="$(get_region_flag "$REGION")"
   export REGION="$REGION"
   export HOST="$HOST"
   export SERVICE_IP="$service_ip"
