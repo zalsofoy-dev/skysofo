@@ -1,7 +1,6 @@
 {
   "log": {
-    "loglevel": "warning",
-    "access": ""
+    "loglevel": "warning"
   },
   "inbounds": [
     {
@@ -11,36 +10,32 @@
       "settings": {
         "clients": [
           {
-            "id": "__USER_ID__"
+            "id": "__USER_ID__",
+            "password": "__USER_ID__",
+            "level": 0
           }
         ],
         "decryption": "none"
       },
       "streamSettings": {
         "network": "__NETWORK__",
-        "security": "tls",
-        "tlsSettings": {
-          "minVersion": "1.2",
-          "cipherSuites": [
-            "TLS_AES_256_GCM_SHA384",
-            "TLS_CHACHA20_POLY1305_SHA256",
-            "TLS_AES_128_GCM_SHA256"
-          ],
-          "alpn": ["h2", "http/1.1"],
-          "preferServerCipherSuites": true,
-          "sessionTicket": true
+        "security": "none",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
         },
         "wsSettings": {
           "path": "__WS_PATH__",
-          "host": "__WS_HOST__",
-          "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-          },
-          "acceptProxyProtocol": false
+          "host": "__HOST__"
+        },
+        "grpcSettings": {
+          "serviceName": "__WS_PATH__"
         }
       },
       "sniffing": {
-        "enabled": false
+        "enabled": false,
+        "destOverride": ["http", "tls"]
       }
     },
     {
@@ -59,10 +54,7 @@
       "settings": {},
       "streamSettings": {
         "sockopt": {
-          "tcpFastOpen": true,
-          "tfo": 1,
-          "mark": 255,
-          "dialerProxy": ""
+          "tcpFastOpen": true
         }
       },
       "tag": "direct"
@@ -78,7 +70,6 @@
     "services": ["StatsService"]
   },
   "routing": {
-    "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
         "inboundTag": ["api"],
@@ -90,16 +81,16 @@
   "policy": {
     "levels": {
       "0": {
-        "statsUserUplink": false,
-        "statsUserDownlink": false,
-        "bufferSize": 32768,
+        "statsUserUplink": true,
+        "statsUserDownlink": true,
+        "bufferSize": 65536,
         "uplinkCapacity": __SPEED_LIMIT__,
         "downlinkCapacity": __SPEED_LIMIT__
       }
     },
     "system": {
-      "statsInboundUplink": false,
-      "statsInboundDownlink": false
+      "statsInboundUplink": true,
+      "statsInboundDownlink": true
     }
   }
 }

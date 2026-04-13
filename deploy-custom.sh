@@ -277,7 +277,7 @@ cat > config.json <<'XRAY_CONFIG'
     },
     "streamSettings": {
       "network": "ws",
-      "security": "tls",
+      "security": "none",
       "wsSettings": {
         "path": "__WS_PATH__",
         "connectionReuse": true
