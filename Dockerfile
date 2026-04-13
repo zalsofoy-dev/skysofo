@@ -1,25 +1,38 @@
-FROM golang:1.20-bullseye AS builder
+FROM golang:1.20-alpine AS builder
 
 WORKDIR /src
 
-# Copy only the template and the generator source to build a static binary
+# Install build dependencies
+RUN apk add --no-cache ca-certificates tzdata
+
+# Copy source files
 COPY config.json.tpl /src/config.json.tpl
 COPY main.go /src/main.go
 COPY go.mod /src/go.mod
 
-
-#RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o /configgen /src/main.go
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o /configgen .
-
+# Build optimized static binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags='-s -w -extldflags "-static"' \
+    -tags netgo \
+    -o /configgen \
+    .
 
 FROM ghcr.io/xtls/xray-core:latest
 
-# Copy the generated static binary and the template into the final image
+# Copy only necessary files
 COPY --from=builder /configgen /configgen
 COPY config.json.tpl /config.json.tpl
 
-# Ensure xray config dir exists and expose the Cloud Run port
-EXPOSE 8080
+# Metadata
+LABEL maintainer="skysofo"
+LABEL description="Optimized VLESS+WS+TLS Xray configuration"
 
-# Run the config generator which will write /etc/xray/config.json and exec xray
+# Expose optimized ports
+EXPOSE 443/tcp 8080/tcp
+
+# Health check (optional, useful for orchestration)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl -f http://127.0.0.1:10085/ || exit 1
+
+# Run the config generator which spawns xray
 ENTRYPOINT ["/configgen"]

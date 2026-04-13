@@ -27,24 +27,24 @@ func main() {
 	}
 	s := string(data)
 
-	// Gather envs with defaults
+	// Gather envs with optimized defaults
 	proto := getenv("PROTO", "vless")
 	user := getenv("USER_ID", getenv("UUID", "changeme"))
 	wspath := getenv("WS_PATH", "/ws")
+	wshost := getenv("WS_HOST", getenv("HOST", "localhost"))  // WebSocket host header
 	network := getenv("NETWORK", "ws")
 	port := getenv("PORT", "443")
 	speedLimit := getenv("SPEED_LIMIT", "0")  // 0 = unlimited
-	host := getenv("HOST", "localhost")  // WebSocket host header
 
 	// replace placeholders
 	repl := map[string]string{
 		"__PROTO__": proto,
 		"__USER_ID__": user,
 		"__WS_PATH__": wspath,
+		"__WS_HOST__": wshost,
 		"__NETWORK__": network,
 		"__PORT__": port,
 		"__SPEED_LIMIT__": speedLimit,
-		"__HOST__": host,
 	}
 	for k,v := range repl {
 		s = strings.ReplaceAll(s, k, v)
