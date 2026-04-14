@@ -141,7 +141,9 @@ cleanup_final() {
     cd "$(dirname "$script_dir")" || true
     rm -rf "$script_dir" || true
     # Ensure shell is in a valid directory after deletion
-    cd ~ || cd /tmp || true
+    pwd
+cd ~ || cd /tmp
+pwd
   else
     print_warning "Repository removal skipped (invalid script directory: $script_dir)"
   fi
