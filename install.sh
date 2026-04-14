@@ -139,11 +139,11 @@ cleanup_final() {
     print_info "Removing repository folder: $script_dir"
     # Change to parent directory before deletion
     cd "$(dirname "$script_dir")" || true
-    rm -rf "$script_dir" || true
+    cd ~ || cd /tmp || exit 1
+rm -rf "$script_dir"
+exec bash
     # Ensure shell is in a valid directory after deletion
-    pwd
-cd ~ || cd /tmp
-pwd
+    
   else
     print_warning "Repository removal skipped (invalid script directory: $script_dir)"
   fi
