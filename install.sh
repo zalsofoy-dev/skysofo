@@ -334,11 +334,11 @@ fi
 
 # -------- Preset Configurations --------
 declare -A PRESETS=(
-  [production]="memory=2048|cpu=1|instances=16|concurrency=1000|timeout=1800"
-  [budget]="memory=2048|cpu=1|instances=16|concurrency=1000|timeout=1800"
-  [trojan-ws]="proto=trojan|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=1800"
-  [vless-ws]="proto=vless|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=1800"
-  [vmess-ws]="proto=vmess|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=1800"
+  [production]="memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
+  [budget]="memory=2048|cpu=2|instances=8|concurrency=1000|timeout=3600"
+  [trojan-ws]="proto=trojan|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
+  [vless-ws]="proto=vless|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
+  [vmess-ws]="proto=vmess|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
 )
 
 # -------- Cloud Run Service Name --------
