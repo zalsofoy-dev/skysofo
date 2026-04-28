@@ -140,8 +140,8 @@ cleanup_final() {
     # Change to parent directory before deletion
     cd "$(dirname "$script_dir")" || true
     cd ~ || cd /tmp || exit 1
-rm -rf "$script_dir"
-exec bash
+    rm -rf "$script_dir"
+    exec bash
     # Ensure shell is in a valid directory after deletion
     
   else
