@@ -336,9 +336,9 @@ fi
 declare -A PRESETS=(
   [production]="memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
   [budget]="memory=2048|cpu=2|instances=8|concurrency=1000|timeout=3600"
-  [trojan-ws]="proto=trojan|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
-  [vless-ws]="proto=vless|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
-  [vmess-ws]="proto=vmess|path=/|sni=yt3.ggpht.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
+  [trojan-ws]="proto=trojan|path=/|sni=youtubei.googleapis.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
+  [vless-ws]="proto=vless|path=/|sni=youtubei.googleapis.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
+  [vmess-ws]="proto=vmess|path=/|sni=youtubei.googleapis.com|alpn=http/1.1|memory=2048|cpu=1|instances=16|concurrency=1000|timeout=3600"
 )
 
 # -------- Cloud Run Service Name --------
@@ -496,9 +496,9 @@ if [ "${INTERACTIVE}" = true ] && [ -z "${PRESET:-}" ] && [ $ATTEMPT_NUMBER -eq 
   print_section "Quick Start with Presets"
   echo ""
   echo -e "  ${BOLD}${BRIGHT_GREEN}1${NC} ${BRIGHT_GREEN}production${NC}       ${DIM}2048MB RAM, 1 CPU, 16 instances (High Performance)${NC}"
-  echo -e "  ${BOLD}${BRIGHT_RED}2${NC} ${BRIGHT_RED}trojan-ws${NC}          ${DIM}TROJAN Protocol, yt3.ggpht.com (Optimized)${NC}"
-  echo -e "  ${BOLD}${BRIGHT_CYAN}3${NC} ${BRIGHT_CYAN}vless-ws${NC}           ${DIM}VLESS Protocol, yt3.ggpht.com (Fast)${NC}"
-  echo -e "  ${BOLD}${BRIGHT_YELLOW}4${NC} ${BRIGHT_YELLOW}vmess-ws${NC}           ${DIM}VMESS Protocol, yt3.ggpht.com (Compatible)${NC}"
+  echo -e "  ${BOLD}${BRIGHT_RED}2${NC} ${BRIGHT_RED}trojan-ws${NC}          ${DIM}TROJAN Protocol, youtubei.googleapis.com (Optimized)${NC}"
+  echo -e "  ${BOLD}${BRIGHT_CYAN}3${NC} ${BRIGHT_CYAN}vless-ws${NC}           ${DIM}VLESS Protocol, youtubei.googleapis.com (Fast)${NC}"
+  echo -e "  ${BOLD}${BRIGHT_YELLOW}4${NC} ${BRIGHT_YELLOW}vmess-ws${NC}           ${DIM}VMESS Protocol, youtubei.googleapis.com (Compatible)${NC}"
   echo -e "  ${BOLD}${BRIGHT_MAGENTA}5${NC} ${BRIGHT_MAGENTA}custom${NC}            ${DIM}Configure everything manually${NC}"
   echo ""
   read -rp "$(echo -e "${BOLD}${BRIGHT_BLUE}Select preset [1-5]${NC} ${DIM}(default: 1)${NC}: ")" PRESET_CHOICE
