@@ -1389,6 +1389,8 @@ DEPLOY_ARGS=(
   "--execution-environment=gen2"
   "--no-cpu-throttling"
   "--min-instances=1"
+  "--no-cpu-boost"
+  "--session-affinity"
 )
 
 [ -n "${MEMORY}" ] && DEPLOY_ARGS+=("--memory" "${MEMORY}Mi")
