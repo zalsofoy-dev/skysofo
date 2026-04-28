@@ -1349,6 +1349,12 @@ echo ""
 [ -n "${TIMEOUT}" ] && print_success "Timeout: ${BOLD}${TIMEOUT}${NC}s" || print_info "Timeout: (Cloud Run default)"
 [ -n "${MAX_INSTANCES}" ] && print_success "Max instances: ${BOLD}${MAX_INSTANCES}${NC}" || print_info "Max instances: (Cloud Run default)"
 [ -n "${CONCURRENCY}" ] && print_success "Max concurrency: ${BOLD}${CONCURRENCY}${NC}" || print_info "Max concurrency: (Cloud Run default)"
+echo ""
+print_info "Advanced Cloud Run Settings:"
+print_success "  • Execution Environment: ${BOLD}gen2${NC} ✓"
+print_success "  • CPU Throttling: ${BOLD}Disabled${NC} ✓"
+print_success "  • Min Instances: ${BOLD}1${NC} ✓"
+print_info "  • CPU Boost: Disabled (can be enabled if needed)"
 
 # -------- Sanity checks --------
 print_section "Validation"
@@ -1380,6 +1386,9 @@ DEPLOY_ARGS=(
   "--region" "$REGION"
   "--platform" "managed"
   "--allow-unauthenticated"
+  "--execution-environment=gen2"
+  "--cpu-throttling=false"
+  "--min-instances=1"
 )
 
 [ -n "${MEMORY}" ] && DEPLOY_ARGS+=("--memory" "${MEMORY}Mi")
