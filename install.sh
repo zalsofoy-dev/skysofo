@@ -1387,7 +1387,7 @@ DEPLOY_ARGS=(
   "--platform" "managed"
   "--allow-unauthenticated"
   "--execution-environment=gen2"
-  "--cpu-throttling=false"
+  "--no-cpu-throttling"
   "--min-instances=1"
 )
 
