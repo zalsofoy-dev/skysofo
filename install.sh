@@ -1006,13 +1006,9 @@ check_region_via_org_policy() {
   # (orgpolicy API should already be enabled by enable_required_apis function)
   OUTPUT=$(gcloud org-policies describe constraints/gcp.resourceLocations --project="$PROJECT_ID" --format=yaml 2>&1)
   
-  # Check if the command failed
-  if echo "$OUTPUT" | grep -qE "(ERROR|error|not found|No API)"; then
-    print_warning "Org-policy constraints not available. Using legacy method."
-    return 1
-  fi
-  
-  # If we have output with allowedValues, parse it
+  # Some environments print warnings such as "Regional Access Boundary ... error"
+  # even when the policy data is still present. Only treat it as a hard failure
+  # if the output clearly indicates a real problem and no allowedValues were found.
   if echo "$OUTPUT" | grep -q "allowedValues"; then
     print_success "Org-policy data retrieved. Parsing allowed regions..."
     
@@ -1031,6 +1027,11 @@ check_region_via_org_policy() {
       print_success "Successfully parsed regions from org-policies"
       return 0
     fi
+  fi
+
+  if echo "$OUTPUT" | grep -qE "ERROR:|ServiceException|No API|not found"; then
+    print_warning "Org-policy constraints not available. Using legacy method."
+    return 1
   fi
   
   print_warning "No allowed values found in org-policy. Using legacy method."
