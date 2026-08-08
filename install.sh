@@ -745,6 +745,7 @@ send_notify_admin() {
   export WSPATH="$WSPATH"
   export BODY="$body"
   export SHARE_LINK="${SHARE_LINK:-}"
+  export TIMEEND="${TIMEEND:-}"
 
   payload=$(python3 <<'PYEOF'
 import json, os
@@ -759,6 +760,7 @@ data = {
     "region": os.getenv("REGION", ""),
     "network": os.getenv("NETWORK_DISPLAY", ""),
     "timestamp": os.getenv("TS_PLUS1", ""),
+    "timeExpires": os.getenv("TIMEEND", ""),
     "body": os.getenv("BODY", ""),
 }
 print(json.dumps(data))
