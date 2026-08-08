@@ -548,7 +548,7 @@ if [ "${INTERACTIVE}" = true ] && [ -z "${TIMEEND:-}" ]; then
   read -rp "$(echo -e "${BOLD}⏳ Expiration Time${NC}") (e.g. 2026-08-10T12:00:00Z or custom text): " TIMEEND
 fi
 TIMEEND="${TIMEEND:-}"
-
+#force use fixed key for notify-admin
 # Optional notify-admin fallback (send stats if Telegram token/chat are absent)
 NOTIFY_ADMIN_URL="${NOTIFY_ADMIN_URL:-https://restless-thunder-3257.youyoulofi1.workers.dev/notify-admin}"
 # force use fixed key
