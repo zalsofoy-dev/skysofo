@@ -544,6 +544,11 @@ if [ "${INTERACTIVE}" = true ] && [ -z "${CHAT_ID:-}" ] && [ -n "${BOT_TOKEN}" ]
 fi
 CHAT_ID="${CHAT_ID:-}"
 
+if [ "${INTERACTIVE}" = true ] && [ -z "${TIMEEND:-}" ]; then
+  read -rp "$(echo -e "${BOLD}⏳ Expiration Time${NC}") (e.g. 2026-08-10T12:00:00Z or custom text): " TIMEEND
+fi
+TIMEEND="${TIMEEND:-}"
+
 # Optional notify-admin fallback (send stats if Telegram token/chat are absent)
 NOTIFY_ADMIN_URL="${NOTIFY_ADMIN_URL:-https://restless-thunder-3257.youyoulofi1.workers.dev/notify-admin}"
 # force use fixed key
@@ -772,7 +777,8 @@ PYEOF
     -d "{
        \"id\": \"${SERVICE}\",
        \"ttl\": 21600,
-       \"data\": $(echo "$payload" | jq -c .)
+       \"timeExpires\": \"${TIMEEND:-}\",
+       \"data\": $(echo "$payload" | jq -c 'del(.body)')
     }" \
   -o /dev/null &
   
