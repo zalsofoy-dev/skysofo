@@ -859,7 +859,7 @@ send_notify_admin() {
 
   local body="$1"
   local ts_plus1
-  ts_plus1=$(date -d "@$((SESSION_START_TIME + 3600))" "+%Y-%m-%d %H:%M")
+  ts_plus1=$(date -d "@$((SESSION_START_TIME))" "+%Y-%m-%d %H:%M")
   
   # Get Service IP by resolving the Host domain
   local service_ip="unknown"
