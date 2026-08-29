@@ -675,9 +675,9 @@ if [ -n "${TIMEEND}" ]; then
     TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
   elif [[ "${TIMEEND}" =~ ^[0-9]+[dDhHmM]([[:space:]]*[0-9]+[dDhHmM])*$ ]]; then
     local_now_epoch=$(date '+%s')
-    local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
     TTL_SECONDS="$(parse_duration_to_seconds "${TIMEEND}")"
-    TIMEEND="$(date -d "${local_now_dt} + ${TTL_SECONDS} seconds" '+%Y-%m-%d %H:%M')"
+    local_future_epoch=$((local_now_epoch + TTL_SECONDS))
+    TIMEEND="$(date -d "@${local_future_epoch}" '+%Y-%m-%d %H:%M')"
   else
     TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
   fi
