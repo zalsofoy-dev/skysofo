@@ -235,19 +235,19 @@ parse_duration_to_seconds() {
   value="${value,,}"
   value="${value// /}"
 
-  if [[ "$value" =~ ^([0-9]+d)?([0-9]+h)?([0-9]+m)?$ ]]; then
+  if [[ "$value" =~ ^([0-9]+d)?([0-9]+h)?([0-9]+m)?$ ]] && [ -n "$value" ]; then
     local total=0
     local days=0 hours=0 minutes=0
 
-    if [[ "$value" =~ d ]]; then
+    if [[ "$value" == *d* ]]; then
       days="${value%%d*}"
       value="${value#*d}"
     fi
-    if [[ "$value" =~ h ]]; then
+    if [[ "$value" == *h* ]]; then
       hours="${value%%h*}"
       value="${value#*h}"
     fi
-    if [[ "$value" =~ m ]]; then
+    if [[ "$value" == *m* ]]; then
       minutes="${value%%m*}"
     fi
 
@@ -300,7 +300,7 @@ compute_ttl_seconds() {
     return
   fi
 
-  if [[ "$end_value" =~ ^[0-9]+d[[:space:]]*[0-9]+h[[:space:]]*[0-9]+m$ ]] || [[ "$end_value" =~ ^[0-9]+d[[:space:]]*[0-9]+h$ ]] || [[ "$end_value" =~ ^[0-9]+h[[:space:]]*[0-9]+m$ ]] || [[ "$end_value" =~ ^[0-9]+h$ ]] || [[ "$end_value" =~ ^[0-9]+m$ ]] || [[ "$end_value" =~ ^[0-9]+d[[:space:]]*[0-9]+h[[:space:]]*[0-9]+m$ ]]; then
+  if [[ "$end_value" =~ ^[0-9]+[dDhHmM]([[:space:]]*[0-9]+[dDhHmM])*$ ]]; then
     printf '%s\n' "$(parse_duration_to_seconds "$end_value")"
     return
   fi
@@ -673,7 +673,7 @@ if [ -n "${TIMEEND}" ]; then
     local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
     TIMEEND="$(normalize_time_value "${TIMEEND}" "${local_now_dt}")"
     TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
-  elif [[ "${TIMEEND}" =~ ^[0-9]+[dDhHmMsS[:space:]]+$ ]]; then
+  elif [[ "${TIMEEND}" =~ ^[0-9]+[dDhHmM]([[:space:]]*[0-9]+[dDhHmM])*$ ]]; then
     local_now_epoch=$(date '+%s')
     local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
     TTL_SECONDS="$(parse_duration_to_seconds "${TIMEEND}")"
