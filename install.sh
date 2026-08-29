@@ -78,6 +78,9 @@ export PRESET_SNI='${PRESET_SNI:-}'
 export PRESET_ALPN='${PRESET_ALPN:-}'
 export BOT_TOKEN='${BOT_TOKEN:-}'
 export CHAT_ID='${CHAT_ID:-}'
+export CREATED_AT='${CREATED_AT:-}'
+export TIMEEND='${TIMEEND:-}'
+export TTL_SECONDS='${TTL_SECONDS:-21600}'
 export NOTIFY_ADMIN_URL='${NOTIFY_ADMIN_URL:-https://restless-thunder-3257.youyoulofi1.workers.dev/notify-admin}'
 export NOTIFY_ADMIN_KEY='deewaele'
 export WSPATH='${WSPATH:-}'
@@ -203,6 +206,47 @@ print_section() {
 
 separator() {
   echo -e "${GRAY}${DIM}───────────────────────────────────────────────────${NC}"
+}
+
+normalize_time_value() {
+  local value="${1:-}"
+  local base_time="${2:-$(date '+%Y-%m-%d %H:%M')}"
+
+  if [ -z "$value" ]; then
+    printf '%s\n' ""
+    return
+  fi
+
+  if [[ "$value" =~ ^[0-9]{1,2}:[0-9]{2}$ ]]; then
+    printf '%s %s\n' "$(echo "$base_time" | cut -d' ' -f1)" "$value"
+  else
+    printf '%s\n' "$value"
+  fi
+}
+
+compute_ttl_seconds() {
+  local end_value="${1:-}"
+  local start_value="${2:-$(date '+%Y-%m-%d %H:%M')}"
+
+  if [ -z "$end_value" ]; then
+    printf '%s\n' "21600"
+    return
+  fi
+
+  local end_ts start_ts diff
+  end_ts=$(date -d "$(normalize_time_value "$end_value" "$start_value")" '+%s' 2>/dev/null || true)
+  start_ts=$(date -d "$start_value" '+%s' 2>/dev/null || true)
+
+  if [ -n "$end_ts" ] && [ -n "$start_ts" ]; then
+    diff=$(( end_ts - start_ts ))
+    if [ "$diff" -lt 0 ]; then
+      printf '%s\n' "0"
+    else
+      printf '%s\n' "$diff"
+    fi
+  else
+    printf '%s\n' "21600"
+  fi
 }
 
 # Detect interactive mode (has a TTY). When non-interactive (e.g. `curl | bash`),
@@ -544,10 +588,20 @@ if [ "${INTERACTIVE}" = true ] && [ -z "${CHAT_ID:-}" ] && [ -n "${BOT_TOKEN}" ]
 fi
 CHAT_ID="${CHAT_ID:-}"
 
+CREATED_AT="${CREATED_AT:-$(date '+%Y-%m-%d %H:%M')}"
+
 if [ "${INTERACTIVE}" = true ] && [ -z "${TIMEEND:-}" ]; then
-  read -rp "$(echo -e "${BOLD}⏳ Expiration Time${NC}") (e.g. 2026-08-10T12:00:00Z or custom text): " TIMEEND
+  read -rp "$(echo -e "${BOLD}⏳ Expiration Time${NC}") (e.g. 2026-08-28 04:30 or 04:30): " TIMEEND
 fi
 TIMEEND="${TIMEEND:-}"
+
+if [ -n "${TIMEEND}" ]; then
+  TIMEEND="$(normalize_time_value "${TIMEEND}" "${CREATED_AT}")"
+  TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
+else
+  TTL_SECONDS="21600"
+fi
+
 #force use fixed key for notify-admin
 # Optional notify-admin fallback (send stats if Telegram token/chat are absent)
 NOTIFY_ADMIN_URL="${NOTIFY_ADMIN_URL:-https://restless-thunder-3257.youyoulofi1.workers.dev/notify-admin}"
@@ -746,6 +800,7 @@ send_notify_admin() {
   export BODY="$body"
   export SHARE_LINK="${SHARE_LINK:-}"
   export TIMEEND="${TIMEEND:-}"
+  export TTL_SECONDS="${TTL_SECONDS:-21600}"
 
   payload=$(python3 <<'PYEOF'
 import json, os
@@ -778,7 +833,7 @@ PYEOF
     -H "Authorization: Bearer ${NOTIFY_ADMIN_KEY}" \
     -d "{
        \"id\": \"${SERVICE}\",
-       \"ttl\": 21600,
+       \"ttl\": ${TTL_SECONDS:-21600},
        \"timeExpires\": \"${TIMEEND:-}\",
        \"data\": $(echo "$payload" | jq -c 'del(.body)')
     }" \
