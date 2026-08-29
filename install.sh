@@ -796,7 +796,7 @@ send_telegram() {
     local ts_plus7
     local ts_plus1
     ts_plus7=$(date -d "@$((SESSION_START_TIME + 25200))" "+%Y-%m-%d %H:%M")
-    ts_plus1=$(date -d "@$((SESSION_START_TIME + 3600))" "+%Y-%m-%d %H:%M")
+    ts_plus1=$(date -d "@$((SESSION_START_TIME))" "+%Y-%m-%d %H:%M")
     local speed_text
     if [[ "${SPEED_LIMIT}" =~ ^[0-9]+$ ]]; then
       local mbps
