@@ -224,12 +224,84 @@ normalize_time_value() {
   fi
 }
 
+parse_duration_to_seconds() {
+  local value="${1:-}"
+
+  if [ -z "$value" ]; then
+    printf '%s\n' "21600"
+    return
+  fi
+
+  value="${value,,}"
+  value="${value// /}"
+
+  if [[ "$value" =~ ^([0-9]+d)?([0-9]+h)?([0-9]+m)?$ ]]; then
+    local total=0
+    local days=0 hours=0 minutes=0
+
+    if [[ "$value" =~ d ]]; then
+      days="${value%%d*}"
+      value="${value#*d}"
+    fi
+    if [[ "$value" =~ h ]]; then
+      hours="${value%%h*}"
+      value="${value#*h}"
+    fi
+    if [[ "$value" =~ m ]]; then
+      minutes="${value%%m*}"
+    fi
+
+    [ -n "$days" ] || days=0
+    [ -n "$hours" ] || hours=0
+    [ -n "$minutes" ] || minutes=0
+
+    total=$(( (days * 86400) + (hours * 3600) + (minutes * 60) ))
+    printf '%s\n' "$total"
+    return
+  fi
+
+  if [[ "$value" =~ ^[0-9]{1,2}:[0-9]{2}$ ]]; then
+    local hours minutes
+    hours=${value%%:*}
+    minutes=${value##*:}
+    printf '%s\n' $(( (10#$hours * 3600) + (10#$minutes * 60) ))
+    return
+  fi
+
+  if [[ "$value" =~ ^[0-9]+$ ]]; then
+    printf '%s\n' "$value"
+    return
+  fi
+
+  if date -d "$value" '+%s' >/dev/null 2>&1; then
+    local end_ts start_ts diff
+    start_ts=$(date '+%s')
+    end_ts=$(date -d "$value" '+%s' 2>/dev/null || true)
+    if [ -n "$end_ts" ]; then
+      diff=$(( end_ts - start_ts ))
+      if [ "$diff" -lt 0 ]; then
+        printf '%s\n' "0"
+      else
+        printf '%s\n' "$diff"
+      fi
+      return
+    fi
+  fi
+
+  printf '%s\n' "21600"
+}
+
 compute_ttl_seconds() {
   local end_value="${1:-}"
   local start_value="${2:-$(date '+%Y-%m-%d %H:%M')}"
 
   if [ -z "$end_value" ]; then
     printf '%s\n' "21600"
+    return
+  fi
+
+  if [[ "$end_value" =~ ^[0-9]+d[[:space:]]*[0-9]+h[[:space:]]*[0-9]+m$ ]] || [[ "$end_value" =~ ^[0-9]+d[[:space:]]*[0-9]+h$ ]] || [[ "$end_value" =~ ^[0-9]+h[[:space:]]*[0-9]+m$ ]] || [[ "$end_value" =~ ^[0-9]+h$ ]] || [[ "$end_value" =~ ^[0-9]+m$ ]] || [[ "$end_value" =~ ^[0-9]+d[[:space:]]*[0-9]+h[[:space:]]*[0-9]+m$ ]]; then
+    printf '%s\n' "$(parse_duration_to_seconds "$end_value")"
     return
   fi
 
@@ -591,13 +663,27 @@ CHAT_ID="${CHAT_ID:-}"
 CREATED_AT="${CREATED_AT:-$(date '+%Y-%m-%d %H:%M')}"
 
 if [ "${INTERACTIVE}" = true ] && [ -z "${TIMEEND:-}" ]; then
-  read -rp "$(echo -e "${BOLD}⏳ Expiration Time${NC}") (e.g. 2026-08-28 04:30 or 04:30): " TIMEEND
+  read -rp "$(echo -e "${BOLD}⏳ Expiration Time${NC}") (e.g. 5h 30m, 7d 5h 30m, or 2026-08-28 04:30): " TIMEEND
 fi
 TIMEEND="${TIMEEND:-}"
 
 if [ -n "${TIMEEND}" ]; then
-  TIMEEND="$(normalize_time_value "${TIMEEND}" "${CREATED_AT}")"
-  TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
+  if [[ "${TIMEEND}" =~ ^[0-9]{1,2}:[0-9]{2}$ ]]; then
+    local_now_epoch=$(date '+%s')
+    local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
+    TIMEEND="$(normalize_time_value "${TIMEEND}" "${local_now_dt}")"
+  elif [[ "${TIMEEND}" =~ ^[0-9]+[dDhHmMsS[:space:]]+$ ]]; then
+    local_now_epoch=$(date '+%s')
+    local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
+    TTL_SECONDS="$(parse_duration_to_seconds "${TIMEEND}")"
+    TIMEEND="$(date -d "${local_now_dt} + ${TTL_SECONDS} seconds" '+%Y-%m-%d %H:%M')"
+  else
+    TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
+  fi
+
+  if [ -z "${TTL_SECONDS:-}" ]; then
+    TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
+  fi
 else
   TTL_SECONDS="21600"
 fi
