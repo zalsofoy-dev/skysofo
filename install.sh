@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export TZ='Etc/GMT-1'
 
 # ========== COLOR CODES & FORMATTING (EARLY DEFINITION) ==========
 # Primary Colors
