@@ -672,6 +672,7 @@ if [ -n "${TIMEEND}" ]; then
     local_now_epoch=$(date '+%s')
     local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
     TIMEEND="$(normalize_time_value "${TIMEEND}" "${local_now_dt}")"
+    TTL_SECONDS="$(compute_ttl_seconds "${TIMEEND}" "${CREATED_AT}")"
   elif [[ "${TIMEEND}" =~ ^[0-9]+[dDhHmMsS[:space:]]+$ ]]; then
     local_now_epoch=$(date '+%s')
     local_now_dt=$(date -d "@${local_now_epoch}" '+%Y-%m-%d %H:%M')
