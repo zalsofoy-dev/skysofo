@@ -835,6 +835,8 @@ send_telegram() {
     "
     msg+="<b>Network:</b> ${NETWORK_DISPLAY}
     "
+    msg+="<b>timeExpires:</b> ${TIMEEND:-N/A}
+    "
    # msg+="<b>Speed Limit:</b> ${speed_text}
    # "
     msg+="${body}"
@@ -1447,8 +1449,8 @@ if [ "${INTERACTIVE}" = true ] && [ -z "${REGION:-}" ]; then
   fi
   
   REGION="$SELECTED_REGION"
-  # set custom identifier to region name with country flag
-  CUSTOM_ID="$(get_region_name "$REGION")"
+  # example format: 202608300950🇺🇸
+  CUSTOM_ID="$(date '+%Y%m%d%H%M')$(get_region_flag "$REGION")"
 fi
 REGION="${REGION:-us-central1}"
 print_success "Selected region: $REGION"
@@ -1691,7 +1693,7 @@ elif [ "$PROTO" = "vmess" ]; then
   VMESS_JSON=$(cat <<EOF
 {
   "v": "2",
-  "ps": "$SERVICE",
+  "ps": "${CUSTOM_ID:-$SERVICE}",
   "add": "$HOST",
   "port": "443",
   "id": "$UUID",
