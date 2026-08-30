@@ -1682,7 +1682,7 @@ fi
 # -------- Generate Protocol Links --------
 if [ "$PROTO" = "vless" ]; then
   VLESS_QUERY="${QUERY_PARAMS}"
-  VLESS_LINK="vless://${UUID}@${HOST}:443?${VLESS_QUERY}#${LINK_FRAGMENT}"
+  VLESS_LINK="vless://${UUID}@${HOST}:443?${VLESS_QUERY}#${LINK_FRAGMENT}YT"
   echo ""
   echo -e "${BRIGHT_CYAN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo -e "  ${BRIGHT_CYAN}${BOLD}VLESS Link:${NC}"
@@ -1693,7 +1693,7 @@ elif [ "$PROTO" = "vmess" ]; then
   VMESS_JSON=$(cat <<EOF
 {
   "v": "2",
-  "ps": "${CUSTOM_ID:-$SERVICE}",
+  "ps": "${CUSTOM_ID:-$SERVICE}YT",
   "add": "$HOST",
   "port": "443",
   "id": "$UUID",
@@ -1720,7 +1720,7 @@ EOF
   echo -e "${BRIGHT_MAGENTA}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   SHARE_LINK="$VMESS_LINK"
 elif [ "$PROTO" = "trojan" ]; then
-  TROJAN_LINK="trojan://${UUID}@${HOST}:443?${QUERY_PARAMS}#${LINK_FRAGMENT}"
+  TROJAN_LINK="trojan://${UUID}@${HOST}:443?${QUERY_PARAMS}#${LINK_FRAGMENT}YT"
   echo ""
   echo -e "${BRIGHT_RED}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo -e "  ${BRIGHT_RED}${BOLD}TROJAN Link:${NC}"
