@@ -1449,8 +1449,8 @@ if [ "${INTERACTIVE}" = true ] && [ -z "${REGION:-}" ]; then
   fi
   
   REGION="$SELECTED_REGION"
-  # example format: 202608300950🇺🇸
-  CUSTOM_ID="$(date '+%Y%m%d%H%M')$(get_region_flag "$REGION")"
+  # example format: 🇺🇸202608300950
+  CUSTOM_ID="$(get_region_flag "$REGION")$(date '+%Y%m%d%H%M')"
 fi
 REGION="${REGION:-us-central1}"
 print_success "Selected region: $REGION"
@@ -1682,7 +1682,7 @@ fi
 # -------- Generate Protocol Links --------
 if [ "$PROTO" = "vless" ]; then
   VLESS_QUERY="${QUERY_PARAMS}"
-  VLESS_LINK="vless://${UUID}@${HOST}:443?${VLESS_QUERY}#${LINK_FRAGMENT}YT"
+  VLESS_LINK="vless://${UUID}@${HOST}:443?${VLESS_QUERY}#YT${LINK_FRAGMENT}"
   echo ""
   echo -e "${BRIGHT_CYAN}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo -e "  ${BRIGHT_CYAN}${BOLD}VLESS Link:${NC}"
@@ -1693,7 +1693,7 @@ elif [ "$PROTO" = "vmess" ]; then
   VMESS_JSON=$(cat <<EOF
 {
   "v": "2",
-  "ps": "${CUSTOM_ID:-$SERVICE}YT",
+  "ps": "YT${CUSTOM_ID:-$SERVICE}",
   "add": "$HOST",
   "port": "443",
   "id": "$UUID",
@@ -1720,7 +1720,7 @@ EOF
   echo -e "${BRIGHT_MAGENTA}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   SHARE_LINK="$VMESS_LINK"
 elif [ "$PROTO" = "trojan" ]; then
-  TROJAN_LINK="trojan://${UUID}@${HOST}:443?${QUERY_PARAMS}#${LINK_FRAGMENT}YT"
+  TROJAN_LINK="trojan://${UUID}@${HOST}:443?${QUERY_PARAMS}#YT${LINK_FRAGMENT}"
   echo ""
   echo -e "${BRIGHT_RED}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
   echo -e "  ${BRIGHT_RED}${BOLD}TROJAN Link:${NC}"
@@ -1739,10 +1739,10 @@ elif [ "$PROTO" = "vmess" ]; then
 else
   DARK_JSON='{}'
 fi
-ts_plus2=$(date -d "@$((SESSION_START_TIME + 3600))" "+%Y-%m-%d %H:%M")
+# ts_plus2=$(date -d "@$((SESSION_START_TIME))" "+%Y%m%d%H%M")
 DARK_BASE64=$(echo -n "$DARK_JSON" | base64 -w 0)
 DARK_LINK="darktunnel://$DARK_BASE64"
-DARK_FILE="${SERVICE}${ts_plus2}.dark"
+DARK_FILE="${SERVICE}${LINK_FRAGMENT}.dark"
 
 #echo "$DARK_LINK" > "$DARK_FILE"
 echo "$SHARE_LINK" > "$DARK_FILE"
